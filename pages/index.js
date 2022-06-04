@@ -24,7 +24,7 @@ export default function Home() {
     <div>
       {
         profiles.map((profile, index) => (
-          <Link href={`/profile/${profile.handle}`}>
+          <Link href={`/profile/${profile.handle}`} key={index}>
             <div className="py-2">
               <div className="rounded-xl border border-black cursor-pointer px-2 pt-2">
                 {

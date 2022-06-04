@@ -2,17 +2,16 @@ import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { Moralis } from 'moralis'
 import { client, getProfiles, getPublications, doesFollow } from '../../api'
-import { Button, Badge, useNotification } from 'web3uikit'
+import { Button, Badge, useNotification, NFTBalance } from 'web3uikit'
 import Image from 'next/image'
 
 
 // Mainnet
-// import ABI from '../../abi.json'
-// const address = "0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d"
+//import ABI from '../../abi.json'
+//const address = "0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d"
 
 // testnet
 import ABI from '../../testnet-abi.json'
-
 const address = "0x60Ae865ee4C725cd04353b5AAb364553f56ceF82"
 
 export default function Profile() {
@@ -40,6 +39,7 @@ export default function Profile() {
     try {
       const response = await client.query(getProfiles, {handle}).toPromise()
       setProfile(response.data.profiles.items[0])
+      console.log(profile)
       const id = response.data.profiles.items[0].id
       const publicationData = await client.query(getPublications, {id}).toPromise()
       setPublications(publicationData.data.publications.items)
@@ -63,18 +63,23 @@ export default function Profile() {
         datas: []
       }
     }
+    const ethers = Moralis.web3Library
+    const provider = await Moralis.enableWeb3()
+    const signer = await provider.getSigner()
     try {
-      const chainId = await Moralis.chainId
-      console.log(chainId)
-      const tx = await Moralis.executeFunction(options)
-      setIsLoading(true)
-      console.log(tx.hash)
+      const contract = new ethers.Contract(
+          address,
+          ABI,
+          signer
+      )
 
+      console.log(profile.id)
+      const tx = await contract.follow([profile.id], [0x0])
+      setIsLoading(true)
       await tx.wait()
-      console.log('transaction success')
       handleNewNotification('success', 'Transaction Success', `Now following ${profile.handle}`)
       setIsLoading(false)
-      setFollowing(true)
+      await fetchProfile()
     } catch (err) {
       console.log(err)
       handleNewNotification('error', 'Transaction failed', err.message)
@@ -127,6 +132,10 @@ export default function Profile() {
               </div>
           ))
         }
+        <NFTBalance
+            address={profile.ownedBy}
+            chain="eth"
+        />
       </div>
   )
 }
