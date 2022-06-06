@@ -12,7 +12,7 @@ function MyApp({ Component, pageProps }) {
       >
         <NotificationProvider>
             <div className="bg-sky-900">
-                <div className="container mx-auto">
+                <div className="container mx-auto text-white">
                     <div className="flex flex-row justify-center">
                         <div className="w-1/3 xs:w-88 xl:w-275 h-screen">
                             <Navbar />

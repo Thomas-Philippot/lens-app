@@ -3,7 +3,11 @@ import { useState, useEffect } from 'react'
 import { Moralis } from 'moralis'
 import { client, getProfiles, getPublications, doesFollow } from '../../api'
 import { Button, Badge, useNotification, NFTBalance } from 'web3uikit'
-import Image from 'next/image'
+import { FiArrowLeft } from 'react-icons/fi'
+import { FaTwitter } from 'react-icons/fa'
+import { TbBell, TbArrowsRightLeft } from 'react-icons/tb'
+import { GrLocation } from 'react-icons/gr'
+import { BiEnvelope, BiDotsHorizontalRounded, BiComment, BiPlus, BiShare, BiLink } from 'react-icons/bi'
 
 
 // Mainnet
@@ -39,9 +43,10 @@ export default function Profile() {
     try {
       const response = await client.query(getProfiles, {handle}).toPromise()
       setProfile(response.data.profiles.items[0])
-      console.log(profile)
+      console.log(response)
       const id = response.data.profiles.items[0].id
       const publicationData = await client.query(getPublications, {id}).toPromise()
+      console.log(publicationData)
       setPublications(publicationData.data.publications.items)
       const isFollowing = await client.query(doesFollow, {
         id,
@@ -89,53 +94,132 @@ export default function Profile() {
   if (!profile) return null
 
   return (
-      <div>
-        {
-          profile.picture ? (
-              <Image src={profile.picture.original.url} width="200px" height="200px"/>
-          ) : (
-              <div style={{width: '60px'}}></div>
-          )
-        }
+      <div className="border-x border-gray-600">
+        <div className="flex justify-start items-center px-4 py-1">
+          <div className="mr-6 font-semibold text-lg"><FiArrowLeft /></div>
+          <div>
+            <div className="font-bold text-xl">
+              {profile.name}
+            </div>
+            <div className="text-sm">
+              {profile.stats.totalPublications} posts
+            </div>
+          </div>
+        </div>
         <div>
-          <h4>{profile.handle}</h4>
-          <p>{profile.bio}</p>
-          <p>Total followers : {profile.stats.totalFollowers}</p>
-          <p>Following : {profile.stats.totalFollowing}</p>
-          {
-            isFollowing ? (
-                <Button
-                    color="green"
-                    disabled
-                    icon="check"
-                    iconLayout="trailing"
-                    text="Follwing"
-                    theme="primary"
-                    type="button"
-                />
-            ) : (
-                <Button
-                    id="test-button-primary"
-                    onClick={follow}
-                    isLoading={isLoading}
-                    text="Follow"
-                    theme="primary"
-                    type="button"
-                />
-            )
-          }
+          <img className="w-full h-52 object-fill" src={profile.coverPicture.original.url}/>
+        </div>
+        <div className="flex justify-end relative h-20">
+          <div className="absolute left-4 bottom-4">
+            {
+              profile.picture ? (
+                  <img src={profile.picture.original.url} className="w-36 h-36 rounded-full object-cover border-4 border-black" />
+              ) : (
+                  <div style={{width: '60px'}}></div>
+              )
+            }
+          </div>
+          <div className="p-4">
+            <div className="flex items-center">
+              <div className="border border-gray-400 rounded-full text-2xl p-1">
+                <BiDotsHorizontalRounded />
+              </div>
+              <div className="border border-gray-400 rounded-full text-2xl p-1 ml-2">
+                <BiEnvelope />
+              </div>
+              <div className="border border-gray-400 rounded-full text-2xl p-1 ml-2">
+                <TbBell />
+              </div>
+              {
+                isFollowing ? (
+                    <div className="ml-2">
+                      <div className="border border-gray-400 rounded-full px-4 py-1.5 font-semibold">
+                        Following
+                      </div>
+                    </div>
+                ) : (
+                    <div>
+                      <div className="bg-white text-gray-800 rounded-full px-4 py-1.5 font-semibold">
+                        Follow
+                      </div>
+                    </div>
+                )
+              }
+            </div>
+          </div>
+        </div>
+        <div className="px-3 pb-2 border-b border-gray-500">
+          <div className="flex flex-col space-y-0 leading-tight">
+            <h4 className="text-xl font-bold">{profile.name}</h4>
+            <span className="text-gray-500">@{profile.handle}</span>
+          </div>
+          <p className="py-2">{profile.bio}</p>
+          <div className="flex items-center text-gray-400 justify-start">
+            {
+              profile.attributes.map((attr, index) => {
+                if (attr.key === 'location') {
+                  return <div className="mx-1 flex items-center">
+                    <GrLocation />
+                    <div className="ml-1">{attr.value}</div>
+                  </div>
+                }
+                if (attr.key === 'twitter') {
+                  return <div className="mx-1 flex items-center">
+                    <FaTwitter />
+                    <div className="ml-1">{attr.value}</div>
+                  </div>
+                }
+                if (attr.key === 'website') {
+                  return <div className="mx-1 flex items-center">
+                    <BiLink />
+                    <a href={attr.value} className="ml-1 cursor-pointer hover:underline text-blue-500">{attr.value}</a>
+                  </div>
+                }
+              })
+            }
+          </div>
+          <div className="flex items-center">
+            <div className="mr-8">
+              <span className="font-semibold">{profile.stats.totalFollowing} </span>
+              <span className="text-sm text-gray-400">following</span></div>
+            <div>
+              <span className="font-semibold">{profile.stats.totalFollowers} </span>
+              <span className="text-sm text-gray-400">followers</span>
+            </div>
+          </div>
         </div>
         {
           publications.map((pub, index) => (
-              <div>
-                {pub.metadata.content}
+              <div className="border-b border-gray-500 px-3 py-2">
+                <div className="flex">
+                  <div className="">
+                    <img src={pub.profile.picture.original.url} className="w-12 h-12 rounded-full object-cover" />
+                  </div>
+                  <div className="w-full pl-4">
+                    <div className="font-medium">{pub.profile.name} <span className="text-gray-500 font-normal">@{pub.profile.handle}</span></div>
+                    <span>{pub.metadata.content}</span>
+                    <div className="flex items-center mt-2">
+                      <div className="flex items-center mr-16 text-gray-400">
+                        <BiComment />
+                        <span className="ml-2">{pub.stats.totalAmountOfComments}</span>
+                      </div>
+                      <div className="flex items-center mr-16 text-gray-400">
+                        <TbArrowsRightLeft />
+                        <span className="ml-2">{pub.stats.totalAmountOfMirrors}</span>
+                      </div>
+                      <div className="flex items-center mr-16 text-gray-400">
+                        <BiPlus />
+                        <span className="ml-2">{pub.stats.totalAmountOfCollects}</span>
+                      </div>
+                      <div className="flex items-center mr-16 text-gray-400">
+                        <BiShare />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
           ))
         }
-        <NFTBalance
-            address={profile.ownedBy}
-            chain="eth"
-        />
       </div>
   )
 }

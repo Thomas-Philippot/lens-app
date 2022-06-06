@@ -3,12 +3,11 @@ import {
   client, recommendedProfiles
 } from '../api'
 import Link from 'next/link'
-import Image from 'next/image'
 
 export default function Home() {
   const [profiles, setProfiles] = useState([])
   useEffect(() => {
-    fetchProfiles()
+    fetchProfiles().then(() => {})
   }, [])
 
   async function fetchProfiles() {
@@ -29,7 +28,7 @@ export default function Home() {
               <div className="rounded-xl border border-black cursor-pointer px-2 pt-2">
                 {
                   profile.picture && profile.picture.original ? (
-                      <Image src={profile.picture.original.url} width="60px" height="60px" className="rounded-xl" />
+                      <img src={profile.picture.original.url} width="60px" height="60px" className="rounded-xl" />
                   ) : (
                       <div style={{ width: '60px', backgroundColor: 'black' }}></div>
                   )

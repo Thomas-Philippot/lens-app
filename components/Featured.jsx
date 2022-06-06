@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react'
 import {client, doesFollow, recommendedProfiles} from "../api";
-import Image from "next/image";
 
 export const Featured = () => {
     const [profiles, setProfiles] = useState([])
@@ -96,7 +95,7 @@ export const Featured = () => {
                                 <div className="flex flex-row">
                                     {
                                         profile.picture && profile.picture.original ? (
-                                            <Image src={profile.picture.original.url} width="40px" height="40px" className="rounded-full object-cover" />
+                                            <img src={profile.picture.original.url} width="40px" height="40px" className="rounded-full object-cover" />
                                         ) : (
                                             <div className="bg-gray-800 rounded-full w-10 h-10"></div>
                                         )
