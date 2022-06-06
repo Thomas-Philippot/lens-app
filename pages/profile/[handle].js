@@ -24,8 +24,12 @@ export default function Profile() {
   const [profile, setProfile] = useState()
   const [isFollowing, setFollowing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [tab, setTab] = useState(1)
   const [publications, setPublications] = useState([])
   const {handle} = router.query
+
+  const isTabOne = tab === 1
+  const isTabTwo = tab === 2
   useEffect(() => {
     fetchProfile()
   }, [handle])
@@ -56,6 +60,14 @@ export default function Profile() {
     } catch (err) {
       console.log(err)
     }
+  }
+
+  function selectComments() {
+    setTab(2)
+  }
+
+  function selectPosts() {
+    setTab(1)
   }
 
   async function follow() {
@@ -107,7 +119,13 @@ export default function Profile() {
           </div>
         </div>
         <div>
-          <img className="w-full h-52 object-fill" src={profile.coverPicture.original.url}/>
+          {
+            profile.coverPicture ? (
+                <img className="w-full h-52 object-fill" src={profile.coverPicture.original.url}/>
+            ) : (
+                <div className="w-full h-52 bg-gray-700"></div>
+            )
+          }
         </div>
         <div className="flex justify-end relative h-20">
           <div className="absolute left-4 bottom-4">
@@ -138,7 +156,7 @@ export default function Profile() {
                       </div>
                     </div>
                 ) : (
-                    <div>
+                    <div className="ml-2">
                       <div className="bg-white text-gray-800 rounded-full px-4 py-1.5 font-semibold">
                         Follow
                       </div>
@@ -154,7 +172,7 @@ export default function Profile() {
             <span className="text-gray-500">@{profile.handle}</span>
           </div>
           <p className="py-2">{profile.bio}</p>
-          <div className="flex items-center text-gray-400 justify-start">
+          <div className="flex items-center text-gray-400 justify-start mb-2">
             {
               profile.attributes.map((attr, index) => {
                 if (attr.key === 'location') {
@@ -188,9 +206,11 @@ export default function Profile() {
             </div>
           </div>
         </div>
+        <button onClick={selectPosts}>Tab 1</button>
+        <button onClick={selectComments}>Tab 2</button>
         {
-          publications.map((pub, index) => (
-              <div className="border-b border-gray-500 px-3 py-2">
+          isTabOne && publications.map((pub, index) => (
+              <div className="border-b border-gray-500 px-3 py-2 hover:bg-sky-800 cursor-pointer">
                 <div className="flex">
                   <div className="">
                     <img src={pub.profile.picture.original.url} className="w-12 h-12 rounded-full object-cover" />

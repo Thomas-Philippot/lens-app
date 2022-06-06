@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import {client, doesFollow, recommendedProfiles} from "../api";
+import Link from 'next/link'
 
 export const Featured = () => {
     const [profiles, setProfiles] = useState([])
@@ -63,75 +64,57 @@ export const Featured = () => {
                 <h1
                     className="text-white text-md font-bold p-3 border-b border-gray-200 "
                 >
-                    What’s happening
-                </h1>
-                <div
-                    className="text-blue-400 text-sm font-normal p-3 border-b border-gray-200 hover:bg-cyan-800 cursor-pointer transition duration-350 ease-in-out"
-                >
-                    <h2 className="font-bold text-md text-white">
-                        #FreePS5Monday
-                    </h2>
-                    <p className="text-xs text-gray-400">29.7K Tweets</p>
-                </div>
-                <div
-                    className="text-blue-400 text-sm font-normal p-3 hover:bg-cyan-800 rounded-b-2xl cursor-pointer transition duration-350 ease-in-out"
-                >
-                    Show more
-                </div>
-            </div>
-            <div className="bg-cyan-900 0 rounded-2xl m-2">
-                <h1
-                    className="text-white text-md font-bold p-3 border-b border-gray-200 "
-                >
                     Who to follow
                 </h1>
                 {
                     profiles.map((profile, index) => (
-                        <div
-                            className="text-blue-400 text-sm font-normal p-3 border-b border-gray-200 hover:bg-cyan-800 cursor-pointer transition duration-350 ease-in-out"
-                            key={index}
-                        >
-                            <div className="flex flex-row justify-between p-2">
-                                <div className="flex flex-row">
-                                    {
-                                        profile.picture && profile.picture.original ? (
-                                            <img src={profile.picture.original.url} width="40px" height="40px" className="rounded-full object-cover" />
-                                        ) : (
-                                            <div className="bg-gray-800 rounded-full w-10 h-10"></div>
-                                        )
-                                    }
-                                    <div className="flex flex-col ml-2">
-                                        <h1
-                                            className="text-white font-bold text-sm"
-                                        >
-                                            {profile.name}
-                                        </h1>
-                                        <p className="text-gray-400 text-sm">{profile.handle}</p>
+                        <Link href={'/profile/' + profile.handle} >
+                            <div
+                                className="text-blue-400 text-sm font-normal p-3 border-b border-gray-200 hover:bg-cyan-800 cursor-pointer transition duration-350 ease-in-out"
+                                key={index}
+                            >
+                                <div className="flex flex-row justify-between p-2">
+                                    <div className="flex flex-row">
+                                        {
+                                            profile.picture && profile.picture.original ? (
+                                                <img src={profile.picture.original.url} width="40px" height="40px" className="rounded-full object-cover" />
+                                            ) : (
+                                                <div className="bg-gray-800 rounded-full w-10 h-10"></div>
+                                            )
+                                        }
+                                        <div className="flex flex-col ml-2">
+                                            <h1
+                                                className="text-white font-bold text-sm"
+                                            >
+                                                {profile.name}
+                                            </h1>
+                                            <p className="text-gray-400 text-sm">{profile.handle}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        {
+                                            (followed[profile.id]) ? (
+                                                <div className="flex items-center h-full text-white">
+                                                    <a
+                                                        href="#"
+                                                        className="text-xs font-bold text-white px-4 py-1 rounded-full bg-blue-400"
+                                                    >Followed</a
+                                                    >
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center h-full text-white">
+                                                    <a
+                                                        href="#"
+                                                        className="text-xs font-bold text-blue-400 px-4 py-1 rounded-full border-2 border-blue-400"
+                                                    >Follow</a
+                                                    >
+                                                </div>
+                                            )
+                                        }
                                     </div>
                                 </div>
-                                <div>
-                                    {
-                                        (followed[profile.id]) ? (
-                                            <div className="flex items-center h-full text-white">
-                                                <a
-                                                    href="#"
-                                                    className="text-xs font-bold text-white px-4 py-1 rounded-full bg-blue-400"
-                                                >Followed</a
-                                                >
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center h-full text-white">
-                                                <a
-                                                    href="#"
-                                                    className="text-xs font-bold text-blue-400 px-4 py-1 rounded-full border-2 border-blue-400"
-                                                >Follow</a
-                                                >
-                                            </div>
-                                        )
-                                    }
-                                </div>
                             </div>
-                        </div>
+                        </Link>
                     ))
                 }
             </div>
