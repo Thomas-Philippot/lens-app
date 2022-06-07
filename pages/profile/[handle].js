@@ -179,7 +179,7 @@ export default function Profile() {
                     </div>
                 ) : (
                     <div className="ml-2">
-                      <div onClick={follow} className="bg-white text-gray-800 rounded-full px-4 py-1.5 font-semibold">
+                      <div onClick={follow} className="cursor-pointer bg-white hover:bg-gray-100 text-gray-800 rounded-full px-4 py-1.5 font-semibold">
                         Follow
                       </div>
                     </div>

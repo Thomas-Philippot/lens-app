@@ -24,6 +24,14 @@ export class CommentCard extends React.Component {
                   <div className="font-semibold">{this.props.pub.mainPost.profile.name} <span
                       className="text-gray-500 font-normal">@{this.props.pub.mainPost.profile.handle}</span></div>
                   <span>{this.props.pub.mainPost.metadata.content}</span>
+                  {
+                    this.props.pub.mainPost.metadata.media.length > 0 ? (
+                        <img src={this.props.pub.mainPost.metadata.media[0].original.url}
+                             className="w-full h-auto rounded-2xl my-1 p-2 hover:bg-sky-700 object-cover"/>
+                    ) : (
+                        <div></div>
+                    )
+                  }
                   <div className="flex items-center mt-2">
                     <div className="flex items-center mr-16 text-gray-400">
                       <BiComment/>
@@ -60,6 +68,14 @@ export class CommentCard extends React.Component {
                   <div className="font-semibold">{this.props.pub.profile.name} <span
                       className="text-gray-500 font-normal">@{this.props.pub.profile.handle}</span></div>
                   <span>{this.props.pub.metadata.content}</span>
+                  {
+                    this.props.pub.metadata.media.length > 0 ? (
+                        <img src={this.props.pub.metadata.media[0].original.url}
+                             className="w-full h-auto rounded-2xl my-1 p-2 hover:bg-sky-700 object-cover"/>
+                    ) : (
+                        <div></div>
+                    )
+                  }
                   <div className="flex items-center mt-2">
                     <div className="flex items-center mr-16 text-gray-400">
                       <BiComment/>
