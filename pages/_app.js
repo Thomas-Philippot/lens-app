@@ -14,13 +14,13 @@ function MyApp({ Component, pageProps }) {
             <div className="bg-sky-900">
                 <div className="container mx-auto text-white">
                     <div className="flex flex-row justify-center">
-                        <div className="w-1/3 xs:w-88 xl:w-275 h-screen">
+                        <div className="w-64 xs:w-88 h-screen">
                             <Navbar />
                         </div>
-                        <div className="w-full h-screen">
+                        <div className="w-1/2 h-screen pr-10 overflow-auto no-scrollbar">
                             <Component {...pageProps} />
                         </div>
-                        <div className="hidden md:block w-1/2">
+                        <div className="hidden md:block w-1/4 h-screen">
                             <Featured />
                         </div>
                     </div>

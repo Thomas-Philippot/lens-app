@@ -1,19 +1,20 @@
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { Moralis } from 'moralis'
-import { client, getProfiles, getPublications, doesFollow } from '../../api'
+import { client, getProfiles, doesFollow, getPosts, getMirrors, getComments } from '../../api'
 import { Button, Badge, useNotification, NFTBalance } from 'web3uikit'
 import { FiArrowLeft } from 'react-icons/fi'
 import { FaTwitter } from 'react-icons/fa'
 import { TbBell, TbArrowsRightLeft } from 'react-icons/tb'
 import { GrLocation } from 'react-icons/gr'
+import { PostCard } from '../../components/PostCard'
+import { MirrorCard } from '../../components/MirrorCard'
+import { CommentCard } from '../../components/CommentCard'
 import { BiEnvelope, BiDotsHorizontalRounded, BiComment, BiPlus, BiShare, BiLink } from 'react-icons/bi'
-
 
 // Mainnet
 //import ABI from '../../abi.json'
 //const address = "0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d"
-
 // testnet
 import ABI from '../../testnet-abi.json'
 const address = "0x60Ae865ee4C725cd04353b5AAb364553f56ceF82"
@@ -23,13 +24,21 @@ export default function Profile() {
   const notify = useNotification()
   const [profile, setProfile] = useState()
   const [isFollowing, setFollowing] = useState(false)
+  const [pubType, setPubType] = useState('POST')
   const [isLoading, setIsLoading] = useState(false)
-  const [tab, setTab] = useState(1)
+  const [tab, setTab] = useState(0)
   const [publications, setPublications] = useState([])
   const {handle} = router.query
 
-  const isTabOne = tab === 1
-  const isTabTwo = tab === 2
+
+  useEffect(() => {
+    console.log(profile)
+    if (typeof profile !== 'undefined') {
+      getPublications(profile.id)
+    }
+  }, [tab])
+
+
   useEffect(() => {
     fetchProfile()
   }, [handle])
@@ -49,9 +58,7 @@ export default function Profile() {
       setProfile(response.data.profiles.items[0])
       console.log(response)
       const id = response.data.profiles.items[0].id
-      const publicationData = await client.query(getPublications, {id}).toPromise()
-      console.log(publicationData)
-      setPublications(publicationData.data.publications.items)
+      await getPublications(id)
       const isFollowing = await client.query(doesFollow, {
         id,
         address: '0x632236009ab5b461B4E7b6AfFb8925630ab66b57'
@@ -62,12 +69,27 @@ export default function Profile() {
     }
   }
 
-  function selectComments() {
-    setTab(2)
+  async function getPublications(id) {
+    setIsLoading(true)
+    const types = [getPosts, getComments, getMirrors]
+    const postType = ['POST', 'COMMENT', 'MIRROR']
+    const publicationData = await client.query(types[tab], {id}).toPromise()
+    console.log(publicationData)
+    await setPublications(publicationData.data.publications.items)
+    await setPubType(postType[tab])
+    setIsLoading(false)
   }
 
   function selectPosts() {
+    setTab(0)
+  }
+
+  function selectComments() {
     setTab(1)
+  }
+
+  function selectMirrors() {
+    setTab(2)
   }
 
   async function follow() {
@@ -107,7 +129,7 @@ export default function Profile() {
 
   return (
       <div className="border-x border-gray-600">
-        <div className="flex justify-start items-center px-4 py-1">
+        <div className="flex justify-start items-center px-4 py-1 sticky top-0 bg-sky-900 z-20">
           <div className="mr-6 font-semibold text-lg"><FiArrowLeft /></div>
           <div>
             <div className="font-bold text-xl">
@@ -121,7 +143,7 @@ export default function Profile() {
         <div>
           {
             profile.coverPicture ? (
-                <img className="w-full h-52 object-fill" src={profile.coverPicture.original.url}/>
+                <img className="w-full h-52 object-cover" src={profile.coverPicture.original.url}/>
             ) : (
                 <div className="w-full h-52 bg-gray-700"></div>
             )
@@ -157,7 +179,7 @@ export default function Profile() {
                     </div>
                 ) : (
                     <div className="ml-2">
-                      <div className="bg-white text-gray-800 rounded-full px-4 py-1.5 font-semibold">
+                      <div onClick={follow} className="bg-white text-gray-800 rounded-full px-4 py-1.5 font-semibold">
                         Follow
                       </div>
                     </div>
@@ -206,38 +228,45 @@ export default function Profile() {
             </div>
           </div>
         </div>
-        <button onClick={selectPosts}>Tab 1</button>
-        <button onClick={selectComments}>Tab 2</button>
+        <div className="flex text-center items-center item-center">
+          <div className="flex-1 cursor-pointer hover:bg-sky-800 py-4 relative" onClick={selectPosts}>
+            Posts
+            {
+              pubType === 'POST' ? (
+                  <div className="absolute inset-x-16 bottom-0 h-1 bg-green-500 rounded-2xl"></div>
+              ) : (<div></div>)
+            }
+          </div>
+          <div className="flex-1 cursor-pointer hover:bg-sky-800 py-4 relative" onClick={selectComments}>
+            Comments
+            {
+              pubType === 'COMMENT' ? (
+                  <div className="absolute inset-x-16 bottom-0 h-1 bg-green-500 rounded-2xl"></div>
+              ) : (<div></div>)
+            }
+          </div>
+          <div className="flex-1 cursor-pointer hover:bg-sky-800 py-4 relative" onClick={selectMirrors}>
+            Mirros
+            {
+              pubType === 'MIRROR' ? (
+                  <div className="absolute inset-x-16 bottom-0 h-1 bg-green-500 rounded-2xl"></div>
+              ) : (<div></div>)
+            }
+          </div>
+        </div>
         {
-          isTabOne && publications.map((pub, index) => (
-              <div className="border-b border-gray-500 px-3 py-2 hover:bg-sky-800 cursor-pointer">
-                <div className="flex">
-                  <div className="">
-                    <img src={pub.profile.picture.original.url} className="w-12 h-12 rounded-full object-cover" />
-                  </div>
-                  <div className="w-full pl-4">
-                    <div className="font-medium">{pub.profile.name} <span className="text-gray-500 font-normal">@{pub.profile.handle}</span></div>
-                    <span>{pub.metadata.content}</span>
-                    <div className="flex items-center mt-2">
-                      <div className="flex items-center mr-16 text-gray-400">
-                        <BiComment />
-                        <span className="ml-2">{pub.stats.totalAmountOfComments}</span>
-                      </div>
-                      <div className="flex items-center mr-16 text-gray-400">
-                        <TbArrowsRightLeft />
-                        <span className="ml-2">{pub.stats.totalAmountOfMirrors}</span>
-                      </div>
-                      <div className="flex items-center mr-16 text-gray-400">
-                        <BiPlus />
-                        <span className="ml-2">{pub.stats.totalAmountOfCollects}</span>
-                      </div>
-                      <div className="flex items-center mr-16 text-gray-400">
-                        <BiShare />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          !isLoading && pubType === 'POST' && publications.map((pub, index) => (
+              <PostCard pub={pub} key={index} />
+          ))
+        }
+        {
+            !isLoading && pubType === 'COMMENT' && publications.map((pub, index) => (
+                <CommentCard pub={pub} key={index} />
+            ))
+        }
+        {
+          !isLoading && pubType === 'MIRROR' && publications.map((pub, index) => (
+            <MirrorCard pub={pub} key={index} />
           ))
         }
       </div>

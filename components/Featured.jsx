@@ -12,7 +12,8 @@ export const Featured = () => {
     async function fetchProfiles() {
         try {
             const response = await client.query(recommendedProfiles).toPromise()
-            setProfiles(response.data.recommendedProfiles)
+            const profiles = response.data.recommendedProfiles
+            setProfiles(profiles.slice(0, 10))
             await isFollowing(response.data.recommendedProfiles)
         } catch (err) {
             console.log(err)
@@ -68,7 +69,7 @@ export const Featured = () => {
                 </h1>
                 {
                     profiles.map((profile, index) => (
-                        <Link href={'/profile/' + profile.handle} >
+                        <Link href={'/profile/' + profile.handle} key={index}>
                             <div
                                 className="text-blue-400 text-sm font-normal p-3 border-b border-gray-200 hover:bg-cyan-800 cursor-pointer transition duration-350 ease-in-out"
                                 key={index}
@@ -77,7 +78,7 @@ export const Featured = () => {
                                     <div className="flex flex-row">
                                         {
                                             profile.picture && profile.picture.original ? (
-                                                <img src={profile.picture.original.url} width="40px" height="40px" className="rounded-full object-cover" />
+                                                <img src={profile.picture.original.url} className="w-10 h-10 rounded-full object-cover" />
                                             ) : (
                                                 <div className="bg-gray-800 rounded-full w-10 h-10"></div>
                                             )

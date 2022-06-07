@@ -5,8 +5,8 @@ import Link from 'next/link'
 export const Navbar = () => {
     return (
         <div className="flex flex-col h-screen xl:pr-3 overflow-y-auto w-68 xs:w-88 xl:w-275">
-            <Link href="/" className="flex my-2 justify-center items-center xl:justify-start transition duration-350 ease-in-out">
-                <a className="mx-6 mt-4">
+            <Link href="/" className="flex my-2 justify-center items-center md:justify-start transition duration-350 ease-in-out">
+                <a className="mt-4">
                     <svg
                         viewBox="0 0 24 24"
                         className="w-8 h-8 text-blue-400 dark:text-white"
@@ -20,7 +20,7 @@ export const Navbar = () => {
                     </svg>
                 </a>
             </Link>
-            <nav className="m-6">
+            <nav className="my-6">
                 <a
                     href="#"
                     className="flex items-center justify-center xl:justify-start text-blue-400 mb-8 transition duration-350 ease-in-out"
