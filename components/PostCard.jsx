@@ -9,9 +9,10 @@ export class PostCard extends React.Component {
           <div className="flex justify-between">
             <div className="w-14 h-full flex pt-1 pl-1">
               {
-                this.props.pub.profile.picture ? (
-                    <img src={this.props.pub.profile.picture.original.url}
-                         className="w-12 h-12 rounded-full object-cover"/>
+                this.props.pub.profile.picture && this.props.pub.profile.picture.original ? (
+                    <img src={this.props.pub.profile.picture.original.url}  className="w-12 h-12 rounded-full object-cover"/>
+                ) : this.props.pub.profile.picture && this.props.pub.profile.picture.uri ? (
+                    <img src={this.props.pub.profile.picture.uri}  className="w-12 h-12 rounded-full object-cover"/>
                 ) : (
                     <div className="w-12 h-12 rounded-full bg-gray-700"></div>
                 )

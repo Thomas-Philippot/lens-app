@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {client, doesFollow, recommendedProfiles} from "../api";
+import {client, doesFollow, recommendedProfiles} from "../api/api";
 import Link from 'next/link'
 
 export const Featured = () => {
@@ -79,6 +79,8 @@ export const Featured = () => {
                                         {
                                             profile.picture && profile.picture.original ? (
                                                 <img src={profile.picture.original.url} className="w-10 h-10 rounded-full object-cover" />
+                                            ) : profile.picture && profile.picture.uri ? (
+                                                <img src={profile.picture.uri} className="w-10 h-10 rounded-full object-cover" />
                                             ) : (
                                                 <div className="bg-gray-800 rounded-full w-10 h-10"></div>
                                             )

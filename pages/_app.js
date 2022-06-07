@@ -3,6 +3,8 @@ import { Navbar } from '../components/Navbar'
 import { Featured } from '../components/Featured'
 import { MoralisProvider } from 'react-moralis'
 import { NotificationProvider } from 'web3uikit'
+import { useMoralis } from 'react-moralis'
+import { useEffect } from 'react'
 
 function MyApp({ Component, pageProps }) {
   return (

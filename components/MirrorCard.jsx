@@ -28,9 +28,10 @@ export class MirrorCard extends React.Component {
                     <div className="flex items-center">
                       <div>
                         {
-                          this.props.pub.mirrorOf.mainPost.profile.picture ? (
-                              <img src={this.props.pub.mirrorOf.mainPost.profile.picture.original.url}
-                                   className="w-6 h-6 rounded-full object-cover"/>
+                          this.props.pub.mirrorOf.mainPost.profile.picture && this.props.pub.mirrorOf.mainPost.profile.picture.original ? (
+                              <img src={this.props.pub.mirrorOf.mainPost.profile.picture.original.url} className="w-6 h-6 rounded-full object-cover"/>
+                          ) : this.props.pub.mirrorOf.mainPost.profile.picture && this.props.pub.mirrorOf.mainPost.profile.picture.uri ?(
+                              <img src={this.props.pub.mirrorOf.mainPost.profile.picture.uri} className="w-6 h-6 rounded-full object-cover"/>
                           ) : (
                               <div className="w-6 h-6 rounded-full bg-gray-700"></div>
                           )
@@ -79,8 +80,11 @@ export class MirrorCard extends React.Component {
                   <TbArrowsRightLeft />
                 </div>
                 {
-                  this.props.pub.mirrorOf.profile.picture ? (
+                  this.props.pub.mirrorOf.profile.picture && this.props.pub.mirrorOf.profile.picture.original ? (
                       <img src={this.props.pub.mirrorOf.profile.picture.original.url}
+                           className="w-12 h-12 rounded-full object-cover"/>
+                  ) : this.props.pub.mirrorOf.profile.picture && this.props.pub.mirrorOf.profile.picture.uri ? (
+                      <img src={this.props.pub.mirrorOf.profile.picture.uri}
                            className="w-12 h-12 rounded-full object-cover"/>
                   ) : (
                       <div className="w-12 h-12 rounded-full bg-gray-700"></div>

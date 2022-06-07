@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { Moralis } from 'moralis'
-import { client, getProfiles, doesFollow, getPosts, getMirrors, getComments } from '../../api'
+import { client, getProfiles, doesFollow, getPosts, getMirrors, getComments } from '../../api/api'
 import { Button, Badge, useNotification, NFTBalance } from 'web3uikit'
 import { FiArrowLeft } from 'react-icons/fi'
 import { FaTwitter } from 'react-icons/fa'
@@ -10,8 +10,8 @@ import { GrLocation } from 'react-icons/gr'
 import { PostCard } from '../../components/PostCard'
 import { MirrorCard } from '../../components/MirrorCard'
 import { CommentCard } from '../../components/CommentCard'
+import Link from 'next/link'
 import { BiEnvelope, BiDotsHorizontalRounded, BiComment, BiPlus, BiShare, BiLink } from 'react-icons/bi'
-
 // Mainnet
 //import ABI from '../../abi.json'
 //const address = "0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d"
@@ -53,6 +53,7 @@ export default function Profile() {
   };
 
   async function fetchProfile() {
+    // TODO : add account from moralis
     try {
       const response = await client.query(getProfiles, {handle}).toPromise()
       setProfile(response.data.profiles.items[0])
@@ -130,7 +131,11 @@ export default function Profile() {
   return (
       <div className="border-x border-gray-600">
         <div className="flex justify-start items-center px-4 py-1 sticky top-0 bg-sky-900 z-20">
-          <div className="mr-6 font-semibold text-lg"><FiArrowLeft /></div>
+          <div className="cursor-pointer hover:bg-sky-800 hover:rounded-full p-2 mr-6 font-semibold text-lg">
+            <Link href="/">
+              <FiArrowLeft />
+            </Link>
+          </div>
           <div>
             <div className="font-bold text-xl">
               {profile.name}
@@ -152,8 +157,10 @@ export default function Profile() {
         <div className="flex justify-end relative h-20">
           <div className="absolute left-4 bottom-4">
             {
-              profile.picture ? (
+              profile.picture && profile.picture.original ? (
                   <img src={profile.picture.original.url} className="w-36 h-36 rounded-full object-cover border-4 border-black" />
+              ) : profile.picture && profile.picture.uri ? (
+                  <img src={profile.picture.uri} className="w-36 h-36 rounded-full object-cover border-4 border-black" />
               ) : (
                   <div style={{width: '60px'}}></div>
               )
